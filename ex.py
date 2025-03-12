@@ -1,23 +1,21 @@
 import streamlit as st
-import pymssql
+import pyodbc
 
 st.title("Microsoft SQL Server Connection")
 
-server = st.text_input("Server Name (e.g., my-server:1433)")
+server = st.text_input("Server Name")
 database = st.text_input("Database Name")
 username = st.text_input("Username")
 password = st.text_input("Password", type="password")
 
 def test_connection(server, database, username, password):
     try:
-        connection = pymssql.connect(
-            server=server,
-            user=username,
-            password=password,
-            database=database,
-            port=1433,  # Specify the port explicitly
-            tds_version='7.0',  # Specify TDS version
-            timeout=30  # Add a timeout
+        connection = pyodbc.connect(
+            f"DRIVER={{ODBC Driver 18 for SQL Server}};"
+            f"SERVER={server};"
+            f"DATABASE={database};"
+            f"UID={username};"
+            f"PWD={password}"
         )
         st.success("Connected successfully!")
         connection.close()
