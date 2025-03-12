@@ -1,24 +1,28 @@
 import streamlit as st
-import pytds
+import pymssql
 
-# Streamlit app title
 st.title("Microsoft SQL Server Connection")
 
-# Input fields for database credentials
-server = st.text_input("Server Name")
+server = st.text_input("Server Name (e.g., my-server:1433)")
 database = st.text_input("Database Name")
 username = st.text_input("Username")
 password = st.text_input("Password", type="password")
 
-# Function to test the connection
 def test_connection(server, database, username, password):
     try:
-        connection = pytds.connect(server, database, username, password)
+        connection = pymssql.connect(
+            server=server,
+            user=username,
+            password=password,
+            database=database,
+            port=1433,  # Specify the port explicitly
+            tds_version='7.0',  # Specify TDS version
+            timeout=30  # Add a timeout
+        )
         st.success("Connected successfully!")
         connection.close()
     except Exception as e:
         st.error(f"Connection failed: {e}")
 
-# Button to test the connection
 if st.button("Connect"):
     test_connection(server, database, username, password)
