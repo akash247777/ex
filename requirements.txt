@@ -1,2 +1,2 @@
 pyodbc
-pytds
+python-tds
