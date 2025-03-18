@@ -4,6 +4,8 @@ import pyodbc
 # Streamlit app title
 st.title("Microsoft SQL Server Connection")
 
+server = "192.168.100.106"  # Replace with your actual public IP
+port = "1433"
 # Input fields for database credentials
 server = st.text_input("Server Name",)
 database = st.text_input("Database Name",)
