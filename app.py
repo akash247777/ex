@@ -1,5 +1,6 @@
 import streamlit as st
 import pymssql
+import sqlalchemy
 # Streamlit app title
 st.title("Microsoft SQL Server Connection")
 
@@ -10,11 +11,14 @@ username = st.text_input("Username",)
 password = st.text_input("Password", type="password")
 
 # Function to test the connection
+from sqlalchemy import create_engine
+
 def test_connection(server, database, username, password):
     try:
-        conn = pymssql.connect(server=server, user=username, password=password, database=database)
-        st.success("Connected successfully!")
-        conn.close()
+        connection_string = f"mssql+pyodbc://{username}:{password}@{server}/{database}?driver=ODBC+Driver+17+for+SQL+Server"
+        engine = create_engine(connection_string)
+        with engine.connect() as conn:
+            st.success("Connected successfully!")
     except Exception as e:
         st.error(f"Connection failed: {e}")
 
