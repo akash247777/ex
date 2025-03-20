@@ -1,6 +1,5 @@
 import streamlit as st
-import pyodbc
-
+import pymssql
 # Streamlit app title
 st.title("Microsoft SQL Server Connection")
 
@@ -13,10 +12,9 @@ password = st.text_input("Password", type="password")
 # Function to test the connection
 def test_connection(server, database, username, password):
     try:
-        connection_string = f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password}"
-        connection = pyodbc.connect(connection_string)
+        conn = pymssql.connect(server=server, user=username, password=password, database=database)
         st.success("Connected successfully!")
-        connection.close()
+        conn.close()
     except Exception as e:
         st.error(f"Connection failed: {e}")
 
