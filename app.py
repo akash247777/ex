@@ -1,27 +1,36 @@
 import streamlit as st
-import pymssql
-import sqlalchemy
+import mysql.connector
+from mysql.connector import Error
+
 # Streamlit app title
-st.title("Microsoft SQL Server Connection")
+st.title("MySQL Connection Tester")
 
 # Input fields for database credentials
-server = st.text_input("Server Name",)
-database = st.text_input("Database Name",)
-username = st.text_input("Username",)
-password = st.text_input("Password", type="password")
+host = st.text_input("Enter Hostname")
+user = st.text_input("Enter Username")
+password = st.text_input("Enter Password", type="password")
+database = st.text_input("Enter Database Name")
 
-# Function to test the connection
-from sqlalchemy import create_engine
-
-def test_connection(server, database, username, password):
+# Button to test connection
+if st.button("Test Connection"):
     try:
-        connection_string = f"mssql+pyodbc://{username}:{password}@{server}/{database}?driver=ODBC+Driver+17+for+SQL+Server"
-        engine = create_engine(connection_string)
-        with engine.connect() as conn:
-            st.success("Connected successfully!")
-    except Exception as e:
-        st.error(f"Connection failed: {e}")
+        # Connect to MySQL
+        conn = mysql.connector.connect(
+            host=host,
+            user=user,
+            password=password,
+            database=database
+        )
 
-# Button to test the connection
-if st.button("Connect"):
-    test_connection(server, database, username, password)
+        # Check if connected
+        if conn.is_connected():
+            st.success("Connected to MySQL database successfully!")
+        else:
+            st.error("Failed to connect to the MySQL database.")
+    
+    except Error as e:
+        st.error(f"Error: {e}")
+    
+    finally:
+        if 'conn' in locals() and conn.is_connected():
+            conn.close()
