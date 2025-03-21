@@ -1,36 +1,25 @@
 import streamlit as st
-import mysql.connector
-from mysql.connector import Error
+import pyodbc
 
 # Streamlit app title
-st.title("MySQL Connection Tester")
+st.title("Microsoft SQL Server Connection")
 
 # Input fields for database credentials
-host = st.text_input("Enter Hostname")
-user = st.text_input("Enter Username")
-password = st.text_input("Enter Password", type="password")
-database = st.text_input("Enter Database Name")
+server = st.text_input("Server Name",)
+database = st.text_input("Database Name",)
+username = st.text_input("Username",)
+password = st.text_input("Password", type="password")
 
-# Button to test connection
-if st.button("Test Connection"):
+# Function to test the connection
+def test_connection(server, database, username, password):
     try:
-        # Connect to MySQL
-        conn = mysql.connector.connect(
-            host=host,
-            user=user,
-            password=password,
-            database=database
-        )
+        connection_string = f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password}"
+        connection = pyodbc.connect(connection_string)
+        st.success("Connected successfully!")
+        connection.close()
+    except Exception as e:
+        st.error(f"Connection failed: {e}")
 
-        # Check if connected
-        if conn.is_connected():
-            st.success("Connected to MySQL database successfully!")
-        else:
-            st.error("Failed to connect to the MySQL database.")
-    
-    except Error as e:
-        st.error(f"Error: {e}")
-    
-    finally:
-        if 'conn' in locals() and conn.is_connected():
-            conn.close()
+# Button to test the connection
+if st.button("Connect"):
+    test_connection(server, database, username, password)
